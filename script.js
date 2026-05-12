@@ -1,35 +1,45 @@
-// Inisialisasi Animasi AOS
+// Konfigurasi Animasi Halus ala Tema Premium
 AOS.init({
-    duration: 1000,
-    once: false, // Animasi bisa berulang kalau discroll naik turun
+    duration: 1200,          // Durasi animasi diperlambat agar lebih elegan
+    easing: 'ease-out-cubic',// Efek pergerakan lebih dinamis
+    once: false,             // Animasi akan terus terpicu saat di-scroll naik/turun
+    mirror: true,            // Animasi memantul saat di-scroll kembali
+    offset: 50               // Animasi dimulai lebih awal saat elemen mendekati layar
 });
 
-// Fitur Buka Undangan (Slide Up Cover)
 const coverPage = document.getElementById("cover-page");
 const bgMusic = document.getElementById("bg-music");
 const musicBtn = document.getElementById("music-btn");
 let isPlaying = false;
 
 function openInvitation() {
-    // 1. Geser cover ke atas
+    // Efek transisi ke atas
     coverPage.style.transform = "translateY(-100vh)";
     
-    // 2. Kembalikan scroll body yang tadinya terkunci
+    // Buka kunci scroll
     document.body.style.overflow = "auto";
     
-    // 3. Putar musik
-    bgMusic.play();
+    // Putar musik
+    bgMusic.play().catch(error => {
+        console.log("Autoplay dicegah oleh browser, tamu harus klik manual.");
+    });
     isPlaying = true;
     
-    // 4. Tampilkan tombol musik yang tadinya disembunyikan
+    // Tampilkan tombol musik dengan efek perlahan
     musicBtn.classList.remove("hide");
+    musicBtn.style.opacity = "1";
+    
+    // Refresh AOS untuk memastikan elemen di konten utama ter-load animasinya
+    setTimeout(function() {
+        AOS.refresh();
+    }, 500);
 }
 
-// Fitur Toggle Play/Pause Musik
 function toggleMusic() {
     if (isPlaying) {
         bgMusic.pause();
         musicBtn.innerHTML = '<i class="fas fa-compact-disc"></i>';
+        musicBtn.style.animation = "none";
     } else {
         bgMusic.play();
         musicBtn.innerHTML = '<i class="fas fa-compact-disc fa-spin"></i>';
