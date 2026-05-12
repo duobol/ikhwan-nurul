@@ -1,45 +1,32 @@
-// Konfigurasi Tanggal Pernikahan (Format: Tahun, Bulan (0-11), Tanggal, Jam, Menit)
-// Bulan dimulai dari 0 (0 = Januari, 11 = Desember)
-const weddingDate = new Date(2026, 11, 20, 8, 0, 0).getTime();
+// Inisialisasi Animasi AOS
+AOS.init({
+    duration: 1000,
+    once: false, // Animasi bisa berulang kalau discroll naik turun
+});
 
-// Fitur Hitung Mundur (Countdown)
-const countdownTimer = setInterval(() => {
-    const now = new Date().getTime();
-    const distance = weddingDate - now;
-
-    if (distance < 0) {
-        clearInterval(countdownTimer);
-        document.getElementById("countdown").innerHTML = "<h3>Acara Telah Dimulai</h3>";
-        return;
-    }
-
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-    document.getElementById("days").innerText = days.toString().padStart(2, '0');
-    document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-    document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-    document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-}, 1000);
-
-// Fitur Salin Nomor Rekening
-function copyText(elementId) {
-    const text = document.getElementById(elementId).innerText;
-    navigator.clipboard.writeText(text).then(() => {
-        alert("Nomor rekening berhasil disalin: " + text);
-    }).catch(err => {
-        console.error('Gagal menyalin teks: ', err);
-    });
-}
-
-// Fitur Putar/Jeda Musik
-const musicBtn = document.getElementById("music-btn");
+// Fitur Buka Undangan (Slide Up Cover)
+const coverPage = document.getElementById("cover-page");
 const bgMusic = document.getElementById("bg-music");
+const musicBtn = document.getElementById("music-btn");
 let isPlaying = false;
 
-musicBtn.addEventListener("click", () => {
+function openInvitation() {
+    // 1. Geser cover ke atas
+    coverPage.style.transform = "translateY(-100vh)";
+    
+    // 2. Kembalikan scroll body yang tadinya terkunci
+    document.body.style.overflow = "auto";
+    
+    // 3. Putar musik
+    bgMusic.play();
+    isPlaying = true;
+    
+    // 4. Tampilkan tombol musik yang tadinya disembunyikan
+    musicBtn.classList.remove("hide");
+}
+
+// Fitur Toggle Play/Pause Musik
+function toggleMusic() {
     if (isPlaying) {
         bgMusic.pause();
         musicBtn.innerHTML = '<i class="fas fa-compact-disc"></i>';
@@ -48,13 +35,4 @@ musicBtn.addEventListener("click", () => {
         musicBtn.innerHTML = '<i class="fas fa-compact-disc fa-spin"></i>';
     }
     isPlaying = !isPlaying;
-});
-
-// Auto-play musik saat user scroll pertama kali (kebijakan browser)
-document.body.addEventListener('click', function() {
-    if(!isPlaying) {
-        bgMusic.play();
-        isPlaying = true;
-        musicBtn.innerHTML = '<i class="fas fa-compact-disc fa-spin"></i>';
-    }
-}, { once: true });
+}
